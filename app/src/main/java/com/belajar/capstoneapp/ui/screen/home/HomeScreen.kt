@@ -45,7 +45,7 @@ import com.belajar.capstoneapp.ui.theme.Green300
 @Composable
 fun HomeScreen (
     modifier: Modifier = Modifier,
-    navigateToDetail: (String) -> Unit
+    navigateToDetail: (String) -> Unit,
     ) {
         Column(
             modifier = Modifier
