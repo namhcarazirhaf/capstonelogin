@@ -1,8 +1,10 @@
 package com.belajar.capstoneapp.ui.screen.camera
 
+import android.content.Context
 import android.net.Uri
 import android.util.Log
 import androidx.camera.core.CameraSelector
+import androidx.compose.material.icons.filled.Home
 import androidx.camera.core.ImageCapture
 import androidx.camera.core.ImageCaptureException
 import androidx.camera.core.Preview
@@ -11,6 +13,7 @@ import androidx.camera.view.PreviewView
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.ui.res.painterResource
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
@@ -20,6 +23,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -32,10 +36,13 @@ import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
+import com.belajar.capstoneapp.R
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.Locale
 import java.util.concurrent.Executor
+import kotlin.coroutines.resume
+import kotlin.coroutines.suspendCoroutine
 
 @Composable
 fun CameraView(
@@ -44,51 +51,33 @@ fun CameraView(
     onImageCaptured: (Uri) -> Unit,
     onError: (ImageCaptureException) -> Unit
 ) {
-    var cameraProvider: ProcessCameraProvider? by remember { mutableStateOf(null) }
-    var lensFacing by remember { mutableStateOf(CameraSelector.LENS_FACING_BACK) }
+    // 1
+    val lensFacing = CameraSelector.LENS_FACING_BACK
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
 
-    var imageCapture: ImageCapture? by remember { mutableStateOf(null) }
-
-    var preview: Preview? by remember { mutableStateOf(null) }
-
+    val preview = Preview.Builder().build()
     val previewView = remember { PreviewView(context) }
-
+    val imageCapture: ImageCapture = remember { ImageCapture.Builder().build() }
     val cameraSelector = CameraSelector.Builder()
         .requireLensFacing(lensFacing)
         .build()
 
-    DisposableEffect(Unit) {
-        val cameraProviderFuture = ProcessCameraProvider.getInstance(context)
-        cameraProviderFuture.addListener({
-            cameraProvider = cameraProviderFuture.get()
-            cameraProvider?.let {
-                // Initialize your preview and imageCapture here
-                preview = Preview.Builder().build()
-                imageCapture = ImageCapture.Builder().build()
+    // 2
+    LaunchedEffect(lensFacing) {
+        val cameraProvider = context.getCameraProvider()
+        cameraProvider.unbindAll()
+        cameraProvider.bindToLifecycle(
+            lifecycleOwner,
+            cameraSelector,
+            preview,
+            imageCapture
+        )
 
-                try {
-                    it.unbindAll()
-                    it.bindToLifecycle(
-                        lifecycleOwner,
-                        cameraSelector,
-                        preview,
-                        imageCapture
-                    )
-
-                    preview?.setSurfaceProvider(previewView.surfaceProvider)
-                } catch (e: Exception) {
-                    Log.e("kilo", "Error binding camera", e)
-                }
-            }
-        }, ContextCompat.getMainExecutor(context))
-
-        onDispose {
-            cameraProvider?.unbindAll()
-        }
+        preview.setSurfaceProvider(previewView.surfaceProvider)
     }
 
+    // 3
     Box(contentAlignment = Alignment.BottomCenter, modifier = Modifier.fillMaxSize()) {
         AndroidView({ previewView }, modifier = Modifier.fillMaxSize())
 
@@ -122,30 +111,37 @@ fun CameraView(
 
 private fun takePhoto(
     filenameFormat: String,
-    imageCapture: ImageCapture?,
+    imageCapture: ImageCapture,
     outputDirectory: File,
     executor: Executor,
     onImageCaptured: (Uri) -> Unit,
     onError: (ImageCaptureException) -> Unit
 ) {
-    imageCapture?.let { capture ->
-        val photoFile = File(
-            outputDirectory,
-            SimpleDateFormat(filenameFormat, Locale.US).format(System.currentTimeMillis()) + ".jpg"
-        )
 
-        val outputOptions = ImageCapture.OutputFileOptions.Builder(photoFile).build()
+    val photoFile = File(
+        outputDirectory,
+        SimpleDateFormat(filenameFormat, Locale.US).format(System.currentTimeMillis()) + ".jpg"
+    )
 
-        capture.takePicture(outputOptions, executor, object : ImageCapture.OnImageSavedCallback {
-            override fun onError(exception: ImageCaptureException) {
-                Log.e("kilo", "Take photo error:", exception)
-                onError(exception)
-            }
+    val outputOptions = ImageCapture.OutputFileOptions.Builder(photoFile).build()
 
-            override fun onImageSaved(outputFileResults: ImageCapture.OutputFileResults) {
-                val savedUri = Uri.fromFile(photoFile)
-                onImageCaptured(savedUri)
-            }
-        })
+    imageCapture.takePicture(outputOptions, executor, object: ImageCapture.OnImageSavedCallback {
+        override fun onError(exception: ImageCaptureException) {
+            Log.e("kilo", "Take photo error:", exception)
+            onError(exception)
+        }
+
+        override fun onImageSaved(outputFileResults: ImageCapture.OutputFileResults) {
+            val savedUri = Uri.fromFile(photoFile)
+            onImageCaptured(savedUri)
+        }
+    })
+}
+
+private suspend fun Context.getCameraProvider(): ProcessCameraProvider = suspendCoroutine { continuation ->
+    ProcessCameraProvider.getInstance(this).also { cameraProvider ->
+        cameraProvider.addListener({
+            continuation.resume(cameraProvider.get())
+        }, ContextCompat.getMainExecutor(this))
     }
 }

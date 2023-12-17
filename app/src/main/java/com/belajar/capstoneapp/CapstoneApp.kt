@@ -13,6 +13,9 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavGraph.Companion.findStartDestination
@@ -29,23 +32,43 @@ import com.belajar.capstoneapp.ui.screen.camera.CameraScreen
 import com.belajar.capstoneapp.ui.screen.detail.DetailScreen
 import com.belajar.capstoneapp.ui.screen.diary.DiaryScreen
 import com.belajar.capstoneapp.ui.screen.home.HomeScreen
+import com.belajar.capstoneapp.ui.screen.login.LoginScreen
+import com.belajar.capstoneapp.ui.screen.login.RegisterScreen
 import com.belajar.capstoneapp.ui.theme.CapstoneAppTheme
 
 @Composable
 fun CapstoneApp() {
     val navController = rememberNavController()
+    var isLoggedIn by remember { mutableStateOf(false) }
 
     Scaffold(
         bottomBar = {
-            BottomBar(navController)
+            if (isLoggedIn) {
+                BottomBar(navController)
+            }
         },
         modifier = Modifier.fillMaxSize()
     ) { innerPadding ->
         NavHost(
             navController = navController,
-            startDestination = Screen.Home.route,
+            startDestination = Screen.Login.route,
             modifier = Modifier.padding(innerPadding)
         ) {
+
+            composable(Screen.Login.route) {
+                LoginScreen(
+                    navController = navController,
+                    onLoginSuccess = { isLoggedIn = true }
+                )
+            }
+
+            composable(Screen.Register.route) {
+                RegisterScreen(
+                    navController = navController,
+                    onLoginSuccess = { isLoggedIn = true }
+                )
+            }
+
             composable(Screen.Home.route) {
                 HomeScreen(
                     navigateToDetail = { foodId ->
