@@ -30,23 +30,28 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
 import com.belajar.capstoneapp.R
 
 @Composable
-fun AboutScreen(
+fun ProfileScreen(navController: NavHostController, onLoginSuccess: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val image = painterResource(id = R.drawable.profile)
-    val username = "Fahriza Rachman"
-    val age = "fahriza.rachman026@gmail.com"
-    val height = "namhcarazirhaf026"
+    val username = "dul kopling"
+    val age = "21"
+    val height = "169"
+    val gender = "male"
+    val activity_level = "medium"
+    val weight = "70"
 
     Box(
         modifier = Modifier
             .fillMaxSize()
             .background(Color.White)
             .semantics { contentDescription = "about_page" }
-    ) {
+    )
+    {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -54,7 +59,7 @@ fun AboutScreen(
         ) {
             Box(
                 modifier = Modifier
-                    .size(250.dp)
+                    .size(144.dp)
                     .clip(CircleShape)
                     .background(Color.LightGray)
                     .align(Alignment.CenterHorizontally)
@@ -81,11 +86,7 @@ fun AboutScreen(
                 horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Icon(
-                    imageVector = Icons.Rounded.AttachEmail,
-                    contentDescription = "email_icon",
-                    tint = Color.Black
-                )
+
                 Spacer(modifier = Modifier.width(4.dp))
                 androidx.compose.material.Text(
                     text = age,
@@ -99,11 +100,52 @@ fun AboutScreen(
                 horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Icon(
-                    imageVector = Icons.Rounded.Engineering,
-                    contentDescription = "github_icon",
-                    tint = Color.Black
+
+                Spacer(modifier = Modifier.width(4.dp))
+                androidx.compose.material.Text(
+                    text = activity_level,
+                    color = Color.Black,
+                    fontSize = 16.sp
                 )
+            }
+
+            Spacer(modifier = Modifier.height(8.dp))
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+
+                Spacer(modifier = Modifier.width(4.dp))
+                androidx.compose.material.Text(
+                    text = gender,
+                    color = Color.Black,
+                    fontSize = 16.sp
+                )
+            }
+
+            Spacer(modifier = Modifier.height(8.dp))
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+
+                Spacer(modifier = Modifier.width(4.dp))
+                androidx.compose.material.Text(
+                    text = weight,
+                    color = Color.Black,
+                    fontSize = 16.sp
+                )
+            }
+
+            Spacer(modifier = Modifier.height(8.dp))
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+
                 Spacer(modifier = Modifier.width(4.dp))
                 androidx.compose.material.Text(
                     text = height,
@@ -114,3 +156,4 @@ fun AboutScreen(
         }
     }
 }
+

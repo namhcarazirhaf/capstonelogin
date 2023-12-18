@@ -133,7 +133,7 @@ fun HomeScreen (
                     color = Color.Black
                 )
                 Text(
-                    text = "Fahriza",
+                    text = "Dul",
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Bold,
                     color = Color.Black

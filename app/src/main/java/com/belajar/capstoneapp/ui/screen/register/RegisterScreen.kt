@@ -58,7 +58,7 @@ fun RegisterScreen(navController: NavHostController, onLoginSuccess: () -> Unit)
 
         Spacer(modifier = Modifier.height(20.dp))
         TextField(
-            label = { Text(text = "Your Age") },
+            label = { Text(text = "fill Your Age") },
             value = textLabel.value,
             visualTransformation = PasswordVisualTransformation(),
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
@@ -66,7 +66,7 @@ fun RegisterScreen(navController: NavHostController, onLoginSuccess: () -> Unit)
 
         Spacer(modifier = Modifier.height(20.dp))
         TextField(
-            label = { Text(text = "Your Height") },
+            label = { Text(text = "fill Your Gender") },
             value = textLabel.value,
             visualTransformation = PasswordVisualTransformation(),
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
@@ -74,10 +74,26 @@ fun RegisterScreen(navController: NavHostController, onLoginSuccess: () -> Unit)
 
         Spacer(modifier = Modifier.height(20.dp))
         TextField(
-            label = { Text(text = " Your Weight") },
+            label = { Text(text = "fill Your Height") },
+            value = textLabel.value,
+            visualTransformation = PasswordVisualTransformation(),
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+            onValueChange = { textLabel.value = it })
+
+        Spacer(modifier = Modifier.height(20.dp))
+        TextField(
+            label = { Text(text = " fill Your Weight") },
             value = textLabel.value,
             visualTransformation = PasswordVisualTransformation(),
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.NumberPassword),
+            onValueChange = { textLabel.value = it })
+
+        Spacer(modifier = Modifier.height(20.dp))
+        TextField(
+            label = { Text(text = "fill Your Activity Level") },
+            value = textLabel.value,
+            visualTransformation = PasswordVisualTransformation(),
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
             onValueChange = { textLabel.value = it })
 
         Spacer(modifier = Modifier.height(20.dp))

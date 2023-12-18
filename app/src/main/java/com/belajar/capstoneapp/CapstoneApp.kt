@@ -34,6 +34,7 @@ import com.belajar.capstoneapp.ui.screen.diary.DiaryScreen
 import com.belajar.capstoneapp.ui.screen.home.HomeScreen
 import com.belajar.capstoneapp.ui.screen.login.LoginScreen
 import com.belajar.capstoneapp.ui.screen.login.RegisterScreen
+import com.belajar.capstoneapp.ui.screen.profile.ProfileScreen
 import com.belajar.capstoneapp.ui.theme.CapstoneAppTheme
 
 @Composable
@@ -57,6 +58,13 @@ fun CapstoneApp() {
 
             composable(Screen.Login.route) {
                 LoginScreen(
+                    navController = navController,
+                    onLoginSuccess = { isLoggedIn = true }
+                )
+            }
+
+            composable(Screen.Profile.route) {
+                ProfileScreen(
                     navController = navController,
                     onLoginSuccess = { isLoggedIn = true }
                 )
